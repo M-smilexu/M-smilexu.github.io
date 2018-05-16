@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="现在后端语言有java, php ... 不同项目开发环境和依赖也会有很大不同，为了节约开发成本，前端电脑一般没有后端开发的环境，代码也不在一个项目里，所以联调就是一个比较关键的点了？怎么联调？">
+<meta property="og:type" content="article">
+<meta property="og:title" content="前后端联调解决方案">
+<meta property="og:url" content="http://yoursite.com/2015/09/04/coding-frontend-and-backend-debug/index.html">
+<meta property="og:site_name" content="{ Living , Coding }">
+<meta property="og:description" content="现在后端语言有java, php ... 不同项目开发环境和依赖也会有很大不同，为了节约开发成本，前端电脑一般没有后端开发的环境，代码也不在一个项目里，所以联调就是一个比较关键的点了？怎么联调？">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/images/canary.png">
+<meta property="og:image" content="http://yoursite.com/images/browser-sync.png">
+<meta property="og:updated_time" content="2018-04-27T03:15:18.332Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="前后端联调解决方案">
+<meta name="twitter:description" content="现在后端语言有java, php ... 不同项目开发环境和依赖也会有很大不同，为了节约开发成本，前端电脑一般没有后端开发的环境，代码也不在一个项目里，所以联调就是一个比较关键的点了？怎么联调？">
+<meta name="twitter:image" content="http://yoursite.com/images/canary.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2015/09/04/coding-frontend-and-backend-debug/"/>
+
+
+
+
+
+  <title>前后端联调解决方案 | { Living , Coding }</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">{ Living , Coding }</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2015/09/04/coding-frontend-and-backend-debug/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="smilexu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="{ Living , Coding }">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">前后端联调解决方案</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2015-09-04T20:35:17+08:00">
+                2015-09-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/coding/" itemprop="url" rel="index">
+                    <span itemprop="name">coding</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/coding/debug/" itemprop="url" rel="index">
+                    <span itemprop="name">debug</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2015/09/04/coding-frontend-and-backend-debug/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2015/09/04/coding-frontend-and-backend-debug/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  现在后端语言有java, php ... 不同项目开发环境和依赖也会有很大不同，为了节约开发成本，前端电脑一般没有后端开发的环境，代码也不在一个项目里，所以联调就是一个比较关键的点了？怎么联调？
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>现在后端语言有java, php, 不同项目开发环境和依赖也会有很大不同，为了节约开发成本，前端电脑一般不安装后端开发环境，代码也不在一个项目里，所以联调就是一个比较关键的点了？怎么联调？</p>
+<p>在前后分离的开发模式下，交互一般都是通过ajax到后端请求数据，前端在开发前期，一般都会通过约定的数据格式先在本地模拟数据进行界面渲染，开发结束，联调的时候就需要直接从后端获取数据来渲染界面，看看在真实数据下代码和界面是否运行正常。那么联调的时候必然会涉及一个问题：跨域。其实接下来的前后端联调解决方案解决的问题就是ajax怎么跨域？</p>
+<pre><code>// local
+
+$.ajax({url: &apos;/api/test.json&apos;});
+
+// 跨域: 如后端地址 http://www.mogujie.org/api/test.json
+// 直接运行会报错: No &apos;Access-Control-Allow-Origin&apos; header is present on the requested resource. 
+// Origin &apos;http://localhost:3000&apos; is therefore not allowed access. 
+// The response had HTTP status code 403.
+
+$.ajax({url: &apos;http://www.mogujie.org/api/test.json&apos;});
+</code></pre><p>这里提供两种解决方案： </p>
+<ul>
+<li>1、开启chrome canary的跨域功能;</li>
+<li>2、利用browser-sync的middleware:proxy-middleware转发.</li>
+</ul>
+<h3 id="1、开启chrome-canary的跨域功能"><a href="#1、开启chrome-canary的跨域功能" class="headerlink" title="1、开启chrome canary的跨域功能"></a>1、开启chrome canary的跨域功能</h3><p>在此之前先解释几个问题: </p>
+<ul>
+<li>1.1、Chromium 和 Chrome 的区别;</li>
+<li>1.2、Chromium 和 Chrome 有哪些版本.</li>
+</ul>
+<p><strong>1.1、Chromium 和 Chrome的区别</strong><br><strong>Chromium</strong></p>
+<ul>
+<li>谷歌的开源项目，由开源社区维护。</li>
+<li>国产的所有 “双核浏览器”，都是基于 Chromium 开发的，甚至 Chrome 也是基于它。</li>
+<li>我们下载的 Chromium 浏览器都是其源码未经修改的直接编译版本。</li>
+</ul>
+<p><strong>Chrome</strong></p>
+<ul>
+<li>基于 Chromium，但是最重要的一点是它是闭源的！</li>
+<li>所以有这样的一种说法：谷歌把核心技术都保留在了之家的 Chrome 中。</li>
+</ul>
+<p><strong>上面两者的区别</strong></p>
+<ul>
+<li>事实上 Chrome 相比 Chromium，支持了一些商业的收费插件，这些是不会出现在开源软件中的： H.264编码、mp3编码（我知道的是这两个）</li>
+<li>此外 Chrome 内置了 Flash，Chromium 需要额外安装，安装方法也很简单的：<a href="http://www.zhihu.com/question/32223811/answer/60456561" target="_blank" rel="noopener">安装方法</a></li>
+<li>听说在网页渲染方面 Chrome 也悄悄有一些特别的优化，也许是这样的吧。</li>
+<li>Chromium 的内核版本比 Chrome 明显领先，新的技术都是先在 Chromium 上应用，但是说 Chromium 是新功能的试水版本，这是不准确的。</li>
+<li>Chrome 明显集成了更多的谷歌服务（RanBinNuan），同时也有更多的限制，比如目前使用 Chrome 需要一定手段才能安装非商店的扩展，一旦被发现还会永远禁用，但 Chromium 就没有这些限制！</li>
+</ul>
+<p><strong>1.2、Chromium 和 Chrome 有哪些版本</strong><br><strong>Chromium 的版本</strong><br>对于我们使用者就两个：开源项目的镜像版（10 分钟一次更新），稳定版（大约 1 小时一次更新）<br><strong>Chrome 的版本</strong><br>一共 4 个，新版发布速度递增，新功能数量递增，稳定性递减：</p>
+<ul>
+<li>Stable 稳定版（几月一次更新）</li>
+<li>Beta 测试版（1 月一次更新）</li>
+<li>Dev 开发者版（1 星期一次更新）</li>
+<li><strong>Canary 金丝雀版（脚步几乎同步 Chromium，天天更新）图标采用了特别的土豪金版神奇宝贝球。</strong></li>
+</ul>
+<p>Canary版本是比Dev版本更快，而比Chromium稍慢的Chrome版本，与Chromium版相比Canary版本可以自动更新，比Dev版更新的频率更快。</p>
+<p>Canary版本还有一个重要特性是允许跟系统里其它Chrome版本共同存在。（稳定版和Beta / Dev 相互之间不可共存）</p>
+<p>Google建议广大技术爱好者与开发人员安装Chrome Canary版本，它会为你提供最新的Chrome功能和升级。Chrome开发团队Mark Larson指出：“Canary 版将比开发者版本的升级频繁很多，我们在努力使它像每日开发版本那样获得更新。从Canary版本用户那里获得的数据（尤其是崩溃数据）将帮助我们更快得发现并修复问题。”</p>
+<p>有点扯远了，理清这些关系之后，回到我们的主题：开启chrome canary的跨域功能</p>
+<p>第一步：先安装chrome canary版本， google chrome canary 官网地址，根据提示下载安装</p>
+<p>第二步：打开终端运行如下命令,开启chrome canary的跨越功能</p>
+<pre><code>open -a /Applications/Google\ Chrome\ Canary.app --args --disable-web-security
+</code></pre><p>打开chrome canary，你会看到如下效果，说明开启成功了，接下来你就可以在这个浏览器上调试了<br><img src="/images/canary.png"><br>再运行如下代码就不会报错了</p>
+<pre><code>$.ajax({url: &apos;http://www.mogujie.org/api/test.json&apos;});
+</code></pre><p>普通chrome浏览器理论上也可以开启跨域功能，运行命令如下(我试了几次，没有开启成功，使用canary是一定能开启成功的。)</p>
+<pre><code>open -a /Applications/Google\ Chrome.app --args --disable-web-security
+</code></pre><p>如果接口比较少的时候，这种方式比较简单，效率也不会影响；但是当接口数量比较多时，你联调完成之后可能还需要合并代码：即把前后端代码整合在一起，那又要把联调的时候的url地址改回到原来的地址如：<a href="http://www.mogujie.org/api/test.json" target="_blank" rel="noopener">http://www.mogujie.org/api/test.json</a> ——&gt; /api/test.json；这又是比较浪费时间的活，所以推荐下面这种解决方案。 </p>
+<h3 id="2、利用-browser-sync-的-middleware-proxy-middleware-转发"><a href="#2、利用-browser-sync-的-middleware-proxy-middleware-转发" class="headerlink" title="2、利用 browser-sync 的 middleware:proxy-middleware 转发."></a>2、利用 browser-sync 的 middleware:proxy-middleware 转发.</h3><p>第一步: 如果你没有node环境得先安装node</p>
+<pre><code>brew update
+
+brew install node
+</code></pre><p>第二步: 安装gulp</p>
+<pre><code>npm install -g gulp
+</code></pre><p>进入前端开发目录，建立gulpfile.js文件, 配置内容如下</p>
+<pre><code>var gulp = require(&apos;gulp&apos;);
+var url = require(&apos;url&apos;);
+var proxy = require(&apos;proxy-middleware&apos;);
+var browserSync = require(&apos;browser-sync&apos;); 
+
+// browser-sync task for starting the server.
+gulp.task(&apos;browser-sync&apos;, function() {
+    var proxyOptions = url.parse(&apos;http://www.mogujie.org/&apos;);
+    proxyOptions.route = &apos;/api&apos;;
+    // requests to `/api/x/y/z` are proxied to `http://www.mogujie.org/`
+
+    browserSync({
+        open: true,
+        port: 3000,
+        server: {
+            baseDir: &quot;./&quot;,
+            middleware: [proxy(proxyOptions)]
+        }
+    });
+});
+
+// Default Task
+gulp.task(&apos;default&apos;, [&apos;browser-sync&apos;]);
+</code></pre><p>先安装依赖</p>
+<pre><code>npm install gulp url proxy-middleware browser-sync --save-dev
+</code></pre><p>接着运行 <strong>gulp</strong><br>代码中所有带有<strong>/api</strong>的http会被转发到<strong><a href="http://www.mogujie.org/" target="_blank" rel="noopener">http://www.mogujie.org/</a></strong></p>
+<p><img src="/images/browser-sync.png"></p>
+<p>在开发前，前后端最好先约定ajax请求地址都带有某个路径，如<strong>/api</strong>;便于区分ajax http请求和普通http请求。</p>
+<p>这样在调试结束就可以愉快地开始合代码了！</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2015/05/20/coding-mongodb/" rel="next" title="mongodb 教程">
+                <i class="fa fa-chevron-left"></i> mongodb 教程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/02/23/living-2018-new-start/" rel="prev" title="2018 new start">
+                2018 new start <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="smilexu" />
+            
+              <p class="site-author-name" itemprop="name">smilexu</p>
+              <p class="site-description motion-element" itemprop="description">认真过好每一天，记录生活和工作的点滴</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/M-smilexu" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:xuxiaoxiaoshuai@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://twitter.com/smilexu813" target="_blank" title="Twitter">
+                      
+                        <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://instagram.com/m.smilexu" target="_blank" title="Instagram">
+                      
+                        <i class="fa fa-fw fa-instagram"></i>Instagram</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、开启chrome-canary的跨域功能"><span class="nav-number">1.</span> <span class="nav-text">1、开启chrome canary的跨域功能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、利用-browser-sync-的-middleware-proxy-middleware-转发"><span class="nav-number">2.</span> <span class="nav-text">2、利用 browser-sync 的 middleware:proxy-middleware 转发.</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">smilexu</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://smilexu.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://yoursite.com/2015/09/04/coding-frontend-and-backend-debug/';
+          this.page.identifier = '2015/09/04/coding-frontend-and-backend-debug/';
+          this.page.title = '前后端联调解决方案';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://smilexu.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+    
+
+    
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid=2157967"></script>
+      <!-- UY END -->
+    
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
